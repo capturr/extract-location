@@ -44,16 +44,16 @@ export default (location: string | undefined, country?: string): TExtractedLocat
                 country: testCountry.name,
                 city: city.name,
                 pop: city.pop,
-                precision: testCountry.reg.test(location) ? 3 : 2
+                precision: (country === testCountry.name || testCountry.reg.test(location)) ? 3 : 2
             };
 
             if (city.reg.test(location) && (
                 foundLocation === undefined 
                 || 
                 (
-                    extractedCity.precision >= foundLocation.precision
-                    &&
                     extractedCity.pop > foundLocation.pop
+                    ||
+                    extractedCity.precision > foundLocation.precision
                 )
             )) {
                 foundLocation = extractedCity;
