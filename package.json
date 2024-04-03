@@ -1,0 +1,38 @@
+{
+    "name": "extract-location",
+    "author": "Gaetan Le Gac <contact@gaetan-legac.fr>",
+    "description": "Extract country, state and city from a string.",
+    "keywords": [
+        "keywords",
+        "search",
+        "extract",
+        "parse",
+        "country",
+        "state",
+        "city"
+    ],
+    "version": "0.0.1",
+    "license": "MIT",
+    "private": false,
+    "main": "bin/index.js",
+    "files": [
+        "bin"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/gaetanlegac/extract-location.git"
+    },
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc -w",
+        "prepare": "npm run build"
+    },
+    "devDependencies": {
+        "all-the-cities": "^3.1.0",
+        "escape-string-regexp": "^4.0.0",
+        "fs-extra": "^11.2.0",
+        "path": "^0.12.7",
+        "ts-node": "^10.9.2",
+        "typescript": "^4.3.5"
+    }
+}
