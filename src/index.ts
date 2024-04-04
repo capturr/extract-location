@@ -17,13 +17,10 @@ type TMatchedLocation = {
     // Country + City = 3
     // City only = 2
     // Country only = 1
-    precision: 1 | 2 | 3
+    reliability: 1 | 2 | 3
 }
 
-export type TExtractedLocation = {
-    country: string,
-    city?: string,
-}
+export type TExtractedLocation = Pick<TMatchedLocation, 'country'|'city'|'reliability'>
 
 /*----------------------------------
 - MODULE
@@ -35,7 +32,6 @@ export default (location: string | undefined, country?: string): TExtractedLocat
         return undefined;
 
     location = normalizeCityName(location);
-    console.log("location", location);
     
     let matchedList: TMatchedLocation[] = []
 
@@ -52,7 +48,7 @@ export default (location: string | undefined, country?: string): TExtractedLocat
             matchedList.push({
                 country: testCountry.name,
                 pop: testCountry.pop,
-                precision: 1
+                reliability: 1
             });
 
         // Find the matching city
@@ -62,7 +58,7 @@ export default (location: string | undefined, country?: string): TExtractedLocat
                 country: testCountry.name,
                 city: city.name,
                 pop: city.pop,
-                precision: (country === testCountry.name || countryIsMatching) ? 3 : 2
+                reliability: (country === testCountry.name || countryIsMatching) ? 3 : 2
             };
 
             if (isIn( city.keywords, location )) {
@@ -73,9 +69,9 @@ export default (location: string | undefined, country?: string): TExtractedLocat
 
     matchedList.sort((a, b) => {
 
-        // Sort by precision
-        if (a.precision !== b.precision)
-            return b.precision - a.precision;
+        // Sort by reliability
+        if (a.reliability !== b.reliability)
+            return b.reliability - a.reliability;
 
         // Sort by city length
         if (a.city !== undefined && b.city !== undefined && a.city.length !== b.city.length)
@@ -91,6 +87,7 @@ export default (location: string | undefined, country?: string): TExtractedLocat
 
     return {
         country: bestMatchingLocation.country,
-        city: bestMatchingLocation.city
+        city: bestMatchingLocation.city,
+        reliability: bestMatchingLocation.reliability,
     }
 }

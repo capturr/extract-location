@@ -13,28 +13,55 @@ npm i --save extract-location
 ```typescript
 import extractLocation from 'extract-location';
 
-extractLocation( strongToSearch: string ): undefined | {
+extractLocation( strongToSearch: string, countryToSearchIn: string ): undefined | {
     country: string,
     city?: string,
-    pop: number,
-    // Country + City = 3
-    // City only = 2
-    // Country only = 1
-    precision: 1 | 2 | 3
+    reliability: 1 | 2 | 3
 };
 ```
 
 ## Usage examples
 
 ```typescript
-extractLocation("Paris (19), France");
+extractLocation("Location: Paris (16)");
 ```
 
 ```json
 {
     "country": "France",
     "city": "Paris",
-    "pop": 2138551,
-    "precision": 3
+    "reliability": 2
 }
+```
+
+```typescript
+extractLocation("Paris, United States");
+```
+
+```json
+{
+    "country": "United States",
+    "city": "Paris",
+    "reliability": 3
+}
+```
+
+```typescript
+extractLocation("Paris, United States", "Canada");
+```
+
+```json
+{
+    "country": "Canada",
+    "city": "Paris",
+    "reliability": 3
+}
+```
+
+```typescript
+extractLocation("There is no location here");
+```
+
+```json
+undefined
 ```

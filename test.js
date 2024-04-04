@@ -36,3 +36,7 @@ test('Is insensitive to accents', () => {
 test('Is insnsitive to dashes in name', () => {
     expect( extractLocation('Mantes-la-Ville') ).toStrictEqual( extractLocation('Mantes la Ville') );
 });
+
+test('No location provided', () => {
+    expect( extractLocation('There is no location here') ).toStrictEqual( undefined );
+});
