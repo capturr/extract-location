@@ -1,7 +1,10 @@
 /*----------------------------------
 - DEPENDANCES
 ----------------------------------*/
-import countries from './countries.generated.js';
+
+import countries from './countries.generated';
+
+import { isIn, normalizeCityName } from './utils';
 
 /*----------------------------------
 - TYPES
@@ -31,7 +34,10 @@ export default (location: string | undefined, country?: string): TExtractedLocat
     if (location === undefined)
         return undefined;
 
-    let bestMatchingLocation: TMatchedLocation | undefined;
+    location = normalizeCityName(location);
+    console.log("location", location);
+    
+    let matchedList: TMatchedLocation[] = []
 
     // 1. Country is provided
     for (const testCountry of countries) {
@@ -41,7 +47,13 @@ export default (location: string | undefined, country?: string): TExtractedLocat
         if (!shouldCheckCountry)
             continue;
 
-        const countryIsMatching = testCountry.reg.test(location);
+        const countryIsMatching = isIn( testCountry.keywords, location );
+        if (countryIsMatching)
+            matchedList.push({
+                country: testCountry.name,
+                pop: testCountry.pop,
+                precision: 1
+            });
 
         // Find the matching city
         for (const city of testCountry.cities) {
@@ -50,39 +62,34 @@ export default (location: string | undefined, country?: string): TExtractedLocat
                 country: testCountry.name,
                 city: city.name,
                 pop: city.pop,
-                precision: (country === testCountry.name || testCountry.reg.test(location)) ? 3 : 2
+                precision: (country === testCountry.name || countryIsMatching) ? 3 : 2
             };
 
-            if (city.reg.test(location) && (
-                // If no best matching location
-                bestMatchingLocation === undefined 
-                || 
-                // Is a better matching location
-                (
-                    // Matched length is at least the same
-                    matched.city.length >= bestMatchingLocation.city.length
-                    &&
-                    (
-                        matched.pop > bestMatchingLocation.pop
-                        ||
-                        matched.precision > bestMatchingLocation.precision
-                    )
-                )
-            )) {
-                bestMatchingLocation = matched;
+            if (isIn( city.keywords, location )) {
+                matchedList.push( matched );
             }
         }
-
-        // If no city found, return country only if relevent
-        if (bestMatchingLocation === undefined && countryIsMatching)
-            bestMatchingLocation = {
-                country: testCountry.name,
-                pop: testCountry.pop,
-                precision: 1
-            };
     }
 
-    return bestMatchingLocation === undefined ? undefined : {
+    matchedList.sort((a, b) => {
+
+        // Sort by precision
+        if (a.precision !== b.precision)
+            return b.precision - a.precision;
+
+        // Sort by city length
+        if (a.city !== undefined && b.city !== undefined && a.city.length !== b.city.length)
+            return b.city.length - a.city.length;
+
+        // Sort by population
+        return b.pop - a.pop;
+    });
+
+    const bestMatchingLocation = matchedList[0];
+    if (bestMatchingLocation === undefined)
+        return undefined;
+
+    return {
         country: bestMatchingLocation.country,
         city: bestMatchingLocation.city
     }

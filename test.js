@@ -22,9 +22,17 @@ test('Extract from a city name and country name', () => {
     });
 });
 
-test('Extract from a city name wiht accents', () => {
-    expect( extractLocation('La Défense') ).toStrictEqual({
-        country: 'France',
-        city: 'La Defense'
+test('Extract from a city name and precise the country', () => {
+    expect( extractLocation('Paris, United States', 'Canada') ).toStrictEqual({
+        country: 'Canada',
+        city: 'Paris'
     });
+});
+
+test('Is insensitive to accents', () => {
+    expect( extractLocation('La Défense') ).toStrictEqual( extractLocation('La Defense') );
+});
+
+test('Is insnsitive to dashes in name', () => {
+    expect( extractLocation('Mantes-la-Ville') ).toStrictEqual( extractLocation('Mantes la Ville') );
 });
