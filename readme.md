@@ -32,11 +32,9 @@ extractLocation("Paris (19), France");
 
 ```json
 {
-{
     "country": "France",
     "city": "Paris",
     "pop": 2138551,
     "precision": 3
-}
 }
 ```
