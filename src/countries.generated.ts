@@ -15089,8 +15089,8 @@ export default [{
     iso3: 'USA',
     pop: 223408785,
     cities: [{ 
-        name: "New York City", 
-        reg: /\bNew York City\b/i,
+        name: "New York", 
+        reg: /\bNew York\b/i,
         pop: 8175133 
     },{ 
         name: "Los Angeles", 

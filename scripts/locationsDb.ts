@@ -1,7 +1,22 @@
+/*----------------------------------
+- DEPENDANCES
+----------------------------------*/
+
 // Import deps
 import fs from 'fs-extra';
 import path from 'path';
 import cities from 'all-the-cities';
+
+// Load countries list
+const countries = fs.readJsonSync( path.resolve(__dirname, './countries+states+cities.json' )) as {
+    iso2: string,
+    iso3: string,
+    name: string
+}[]
+
+/*----------------------------------
+- CONST
+----------------------------------*/
 
 // Copy of escape-string-regexp, but escaping slashes
 function escapeStringRegexp(string) {
@@ -18,15 +33,15 @@ function escapeStringRegexp(string) {
 
 // Confoig
 const config = {
-    minPopulation: 10000
+    minPopulation: 10000,
+    replace: {
+        'New York City': 'New York',
+    }
 }
 
-// Load countries list
-const countries = fs.readJsonSync( path.resolve(__dirname, './countries+states+cities.json' )) as {
-    iso2: string,
-    iso3: string,
-    name: string
-}[]
+/*----------------------------------
+- GENERATE
+----------------------------------*/
 
 const countriesIndex: { 
     [iso: string]: {
@@ -66,6 +81,10 @@ for (const city of cities) {
         countriesNotFound.push( city.country );
         continue;
     }
+
+    // Replace name
+    if (city.name in config.replace)
+        city.name = config.replace[ city.name ];
 
     // Index city
     country.population += city.population;
