@@ -1,12 +1,13 @@
 /*----------------------------------
 - DEPENDANCES
 ----------------------------------*/
-import countries from './countries.generated';
+import countries from './countries.generated.js';
 
 /*----------------------------------
 - TYPES
 ----------------------------------*/
-export type TExtractedLocation = {
+
+type TMatchedLocation = {
     country: string,
     city?: string,
     pop: number,
@@ -14,6 +15,11 @@ export type TExtractedLocation = {
     // City only = 2
     // Country only = 1
     precision: 1 | 2 | 3
+}
+
+export type TExtractedLocation = {
+    country: string,
+    city?: string,
 }
 
 /*----------------------------------
@@ -25,7 +31,7 @@ export default (location: string | undefined, country?: string): TExtractedLocat
     if (location === undefined)
         return undefined;
 
-    let foundLocation: TExtractedLocation | undefined;
+    let bestMatchingLocation: TMatchedLocation | undefined;
 
     // 1. Country is provided
     for (const testCountry of countries) {
@@ -40,7 +46,7 @@ export default (location: string | undefined, country?: string): TExtractedLocat
         // Find the matching city
         for (const city of testCountry.cities) {
 
-            const extractedCity: TExtractedLocation = {
+            const matched: TMatchedLocation = {
                 country: testCountry.name,
                 city: city.name,
                 pop: city.pop,
@@ -48,27 +54,36 @@ export default (location: string | undefined, country?: string): TExtractedLocat
             };
 
             if (city.reg.test(location) && (
-                foundLocation === undefined 
+                // If no best matching location
+                bestMatchingLocation === undefined 
                 || 
+                // Is a better matching location
                 (
-                    extractedCity.pop > foundLocation.pop
-                    ||
-                    extractedCity.precision > foundLocation.precision
+                    // Matched length is at least the same
+                    matched.city.length >= bestMatchingLocation.city.length
+                    &&
+                    (
+                        matched.pop > bestMatchingLocation.pop
+                        ||
+                        matched.precision > bestMatchingLocation.precision
+                    )
                 )
             )) {
-                foundLocation = extractedCity;
+                bestMatchingLocation = matched;
             }
         }
 
         // If no city found, return country only if relevent
-        if (foundLocation === undefined && countryIsMatching)
-            foundLocation = {
+        if (bestMatchingLocation === undefined && countryIsMatching)
+            bestMatchingLocation = {
                 country: testCountry.name,
                 pop: testCountry.pop,
                 precision: 1
             };
     }
 
-    // Not found
-    return foundLocation;
+    return bestMatchingLocation === undefined ? undefined : {
+        country: bestMatchingLocation.country,
+        city: bestMatchingLocation.city
+    }
 }
