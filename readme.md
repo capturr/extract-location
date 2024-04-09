@@ -1,6 +1,6 @@
-# Extract Country / City from a String
+# High performance lib to Extract City and Country from any String
 
-[![npm](https://img.shields.io/npm/v/extract-location)](https://www.npmjs.com/package/extract-location)
+[![npm](https://img.shields.io/npm/v/extract-location)](https://www.npmjs.com/package/extract-location) [![npm](https://img.shields.io/npm/dw/extract-location)](https://www.npmjs.com/package/extract-location)
 
 ## Installation
 
