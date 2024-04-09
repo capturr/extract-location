@@ -7,8 +7,7 @@ export const normalizeCityName = (cityName: string) => {
         // Lowercase
         .toLowerCase()
 }
-
-const boundaries = [undefined, ' ', '.', ',', '!', '?', ':', ';', '\n', '\t', '\r', '-', '(', ')', '[', ']', '{', '}', '"', "'"];
+const wordClass = 'abcdefghijklmnopqrstuvwxyz_ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſ';
 
 export const isIn = (name: string, locationString: string ) => {
 
@@ -19,7 +18,7 @@ export const isIn = (name: string, locationString: string ) => {
     // Check if prefixed by boundary
     const prefix = locationString[ index - 1 ];
     const suffix = locationString[ index + name.length ];
-    if (!boundaries.includes( prefix ) || !boundaries.includes( suffix ))
+    if (wordClass.includes( prefix ) || wordClass.includes( suffix ))
         return false;
 
     return true;
